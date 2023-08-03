@@ -105,9 +105,10 @@ def train(n_epochs, device):
     return net
 
 
-def sample_images(n_steps: int, device, net: BasicUNet):
+def sample_images(n_steps: int, batch_size: int, device: str, net: BasicUNet):
     # n_steps = 5
-    x = torch.rand(8, 1, 28, 28).to(device)  # Start from random
+    # batch_size = 8
+    x = torch.rand(batch_size, 1, 28, 28).to(device)  # Start from random
     step_history = [x.detach().cpu()]
     pred_output_history = []
 
