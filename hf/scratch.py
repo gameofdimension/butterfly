@@ -103,3 +103,26 @@ def train(n_epochs, device):
         avg_loss = sum(losses[-len(train_dataloader):]) / len(train_dataloader)
         print(f'Finished epoch {epoch}. Average loss for this epoch: {avg_loss:05f}')
     return net
+
+
+def sample_images(n_steps: int, device, net: BasicUNet):
+    # n_steps = 5
+    x = torch.rand(8, 1, 28, 28).to(device)  # Start from random
+    step_history = [x.detach().cpu()]
+    pred_output_history = []
+
+    for i in range(n_steps):
+        with torch.no_grad():  # No need to track gradients during inference
+            pred = net(x)  # Predict the denoised x0
+        pred_output_history.append(pred.detach().cpu())  # Store model output for plotting
+        mix_factor = 1 / (n_steps - i)  # How much we move towards the prediction
+        x = x * (1 - mix_factor) + pred * mix_factor  # Move part of the way there
+        step_history.append(x.detach().cpu())  # Store step for plotting
+
+    # fig, axs = plt.subplots(n_steps, 2, figsize=(9, 4), sharex=True)
+    # axs[0, 0].set_title('x (model input)')
+    # axs[0, 1].set_title('model prediction')
+    # for i in range(n_steps):
+    #     axs[i, 0].imshow(torchvision.utils.make_grid(step_history[i])[0].clip(0, 1), cmap='Greys')
+    #     axs[i, 1].imshow(torchvision.utils.make_grid(pred_output_history[i])[0].clip(0, 1), cmap='Greys')
+    return pred_output_history, step_history
