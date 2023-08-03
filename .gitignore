@@ -11,3 +11,4 @@ logging.log
 build/
 dist/
 .coverage
+.ipynb_checkpoints/
