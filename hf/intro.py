@@ -4,16 +4,16 @@ from diffusers import UNet2DModel, DDPMScheduler, DDPMPipeline
 from torchvision import transforms
 
 
-def get_data_loader():
+def get_data_loader(image_size: int, batch_size: int = 64):
     dataset = load_dataset("huggan/smithsonian_butterflies_subset", split="train")
 
     # Or load images from a local folder
     # dataset = load_dataset("imagefolder", data_dir="path/to/folder")
 
     # We'll train on 32-pixel square images, but you can try larger sizes too
-    image_size = 32
+    # image_size = 32
     # You can lower your batch size if you're running out of GPU memory
-    batch_size = 64
+    # batch_size = 64
 
     # Define data augmentations
     preprocess = transforms.Compose(
@@ -83,7 +83,7 @@ def train(model, train_dataloader, device, scheduler_step: int, epoch: int):
 
             # Sample a random timestep for each image
             timesteps = torch.randint(
-                0, noise_scheduler.num_train_timesteps, (bs,), device=clean_images.device
+                0, noise_scheduler.config.num_train_timesteps, (bs,), device=clean_images.device
             ).long()
 
             # Add noise to the clean images according to the noise magnitude at each timestep
