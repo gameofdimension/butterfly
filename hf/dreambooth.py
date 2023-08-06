@@ -55,9 +55,9 @@ def build_dataset(model_id, instance_prompt, img_dir):
         subfolder="tokenizer",
     )
 
-    dataset = load_dataset("imagefolder", data_dir=img_dir)
+    dataset = load_dataset("imagefolder", data_dir=img_dir, split='train')
     # Remove the dummy label column
-    dataset = dataset.remove_columns("label")
+    # dataset = dataset.remove_columns("label")
 
     # Push to Hub
     # dataset.push_to_hub("dreambooth-hackathon-images")
@@ -163,7 +163,7 @@ def training_function(text_encoder, vae, unet, feature_extractor, tokenizer, arg
     )
 
     unet, optimizer, train_dataloader = accelerator.prepare(
-        unet, [optimizer], [train_dataloader]
+        unet, optimizer, train_dataloader
     )
 
     # Move text_encode and vae to gpu
@@ -273,7 +273,7 @@ def training_function(text_encoder, vae, unet, feature_extractor, tokenizer, arg
 def main():
     model_id = "CompVis/stable-diffusion-v1-4"
     instance_prompt = get_instance_prompt(name='ccorgi', classname='dog')
-    img_dir = ''
+    img_dir = '/Users/yzq/Downloads/corgi'
     train_dataset = build_dataset(model_id=model_id, instance_prompt=instance_prompt, img_dir=img_dir)
     args = build_args(model_id=model_id, train_dataset=train_dataset, instance_prompt=instance_prompt)
 
